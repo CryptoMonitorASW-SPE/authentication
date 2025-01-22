@@ -20,7 +20,7 @@
     "eslint": "npx eslint app/src/**/*.ts"
   },
   "engines": {
-    "node": "22.13.0"
+    "node": "22.13.1"
   },
   "dependencies": {
     "@semantic-release/git": "^10.0.1"
