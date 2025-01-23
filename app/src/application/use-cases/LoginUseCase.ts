@@ -10,16 +10,16 @@ export class LoginUseCase {
     private passwordHasher: PasswordHasher
   ) {}
 
-  async execute(credentials: LoginCredentials): Promise<AuthResultDTO> {
+  async login(credentials: LoginCredentials): Promise<AuthResultDTO> {
     const user = await this.userRepository.findByEmail(credentials.email);
   
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error('Cant find email');
     }
 
     const isPasswordValid = await this.passwordHasher.compare(credentials.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new Error('Invalid password');
     }
 
     return {
