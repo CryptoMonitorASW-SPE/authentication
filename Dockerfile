@@ -37,8 +37,6 @@ RUN npm install --production
 # Copy built JavaScript files from build stage
 COPY --from=build /usr/src/app/dist ./dist
 
-# Expose the backend port
-EXPOSE 3000
 
 # Start the application using the compiled JavaScript
 CMD ["npm", "start"]
