@@ -1,5 +1,4 @@
 import express from 'express';
-import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository';
 import { BcryptPasswordHasher } from './infrastructure/adapters/BCryptPasswordHasher';
 import { JwtTokenService } from './infrastructure/adapters/JwtTokenService';
 import { LoginUseCase } from './application/use-cases/LoginUseCase';
@@ -9,13 +8,6 @@ import { AuthController } from './infrastructure/controllers/AuthController';
 import { MongoUserRepository } from './infrastructure/adapters/MongoUserRepository';
 
 dotenv.config({ path: resolve(__dirname, '../../../../.env') });
-
-interface Dependencies {
-  userRepository: MongoUserRepository;
-  passwordHasher: BcryptPasswordHasher;
-  tokenService: JwtTokenService;
-  loginUseCase: LoginUseCase;
-}
 
 const runApp = async (jwtKey: string) => {
   const configureDependencies = async () => {
