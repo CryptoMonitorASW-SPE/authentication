@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository';
 import { BcryptPasswordHasher } from './infrastructure/adapters/BCryptPasswordHasher';
 import { JwtTokenService } from './infrastructure/adapters/JwtTokenService';
