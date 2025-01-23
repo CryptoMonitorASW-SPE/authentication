@@ -6,10 +6,8 @@ FROM node:22.13-alpine AS build
 # Set working directory
 WORKDIR /usr/src/app
 
-# Copy package files from the app folder
+# Copy package files
 COPY app/package*.json ./
-# (Optional) If you run gradle tasks inside Docker, you could copy build.gradle.kts too
-# COPY app/build.gradle.kts ./
 
 # Install dependencies
 RUN npm install
@@ -17,26 +15,26 @@ RUN npm install
 # Copy the rest of the application code
 COPY app/ ./
 
-# (Optional) If you had a build step for a front-end, you might do: 
+# Build the TypeScript application
 RUN npm run build
 
 # ================================================
-# Stage 2: Create the final image
+# Stage 2: Production Image
 # ================================================
-FROM node:22.13-alpine AS build-final
+FROM node:22.13-alpine
 
 # Set working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY app/package*.json ./
-
-# Install only production dependencies
-RUN npm install --production
-
-# Copy built JavaScript files from build stage
+# Copy only the necessary files from the build stage
+COPY --from=build /usr/src/app/package*.json ./
 COPY --from=build /usr/src/app/dist ./dist
 
+# Install only production dependencies
+RUN npm install --only=production
 
-# Start the application using the compiled JavaScript
-CMD ["npm", "start"]
+# Expose the application port
+EXPOSE 3001
+
+# Start the application
+CMD ["node", "dist/index.js"]

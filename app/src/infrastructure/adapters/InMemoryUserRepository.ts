@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 export class InMemoryUserRepository implements UserRepository {
   private users: User[] = []
 
-  async saveUser(user: User): Promise<void> {
+  private async saveUser(user: User): Promise<void> {
     this.users.push(user);
   }
 
