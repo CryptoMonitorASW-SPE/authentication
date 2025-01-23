@@ -24,22 +24,14 @@ gitSemVer {
     commitNameBasedUpdateStrategy(ConventionalCommit::semanticVersionUpdate)
 }
 
-node {
-    version.set("22.13.0")
-
-    // Download a local Node.js distribution (instead of using a global one)
-    download.set(true)
-
-    // If you have a specific version of npm to use, uncomment and set it:
-    // npmVersion.set("9.6.6")
-
-    // This is the directory where the plugin will look for package.json
-    nodeProjectDir.set(file(project.projectDir))
-}
-
 tasks.register<NpmTask>("runBackend") {
     dependsOn("prepareBackend")
     args.set(listOf("run", "start"))
+}
+
+tasks.register<NpmTask>("runDev"){
+    dependsOn("prepareBackend")
+    args.set(listOf("run", "dev"))
 }
 
 tasks.register<NpmTask>("prepareBackend") {

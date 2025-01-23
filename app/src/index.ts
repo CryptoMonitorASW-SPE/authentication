@@ -2,18 +2,21 @@ import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRe
 import { BcryptPasswordHasher } from './infrastructure/adapters/BCryptPasswordHasher';
 import { JwtTokenService } from './infrastructure/adapters/JwtTokenService';
 import { LoginUseCase } from './application/use-cases/LoginUseCase';
-import User from './domain/entities/User';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
-//dotenv.config({ path: resolve(__dirname, '../../../.env') });
-//console.log(process.env.JWT_SIMMETRIC_KEY);
+dotenv.config({ path: resolve(__dirname, '../../../../.env') });
+
+const jwtKey = process.env.JWT_SIMMETRIC_KEY;
+if (!jwtKey) {
+  throw new Error('JWT_SIMMETRIC_KEY is not defined in the environment variables');
+}
 
 // Configurazione temporanea per sviluppo
 export const configureDependencies = () => {
   const userRepository = new InMemoryUserRepository();
   const passwordHasher = new BcryptPasswordHasher();
-  const tokenService = new JwtTokenService('SECRETSECRET');
+  const tokenService = new JwtTokenService(jwtKey);
 
   return {
     userRepository,
@@ -46,6 +49,4 @@ createAndLoginUser().then(() => {
 }).catch((error) => {
   console.error('Error executing account function:', error);
 });
-
-
 
