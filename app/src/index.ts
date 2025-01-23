@@ -17,20 +17,7 @@ interface Dependencies {
   loginUseCase: LoginUseCase;
 }
 
-const jwtKey = process.env.JWT_SIMMETRIC_KEY;
-if (!jwtKey) {
-  throw new Error('JWT_SIMMETRIC_KEY is not defined in the environment variables');
-}
-else{
-  const userRepository = new MongoUserRepository();
-  userRepository.ready
-    .then(() => 
-      initialiseApp(jwtKey)
-  )
-  .catch(err => console.error('Error initializing user repository', err));
-}
-
-const initialiseApp = async (jwtKey: string) => {
+const runApp = async (jwtKey: string) => {
   const configureDependencies = async () => {
     //const userRepository = new InMemoryUserRepository();
     const userRepository = new MongoUserRepository();
@@ -60,10 +47,20 @@ const initialiseApp = async (jwtKey: string) => {
     // Login Endpoint
     app.post('/login', (req, res) => authController.login(req, res));
 
-    const PORT = process.env.PORT || 3001;
+    const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 }
+
+const jwtKey = process.env.JWT_SIMMETRIC_KEY;
+if (!jwtKey) {
+  throw new Error('JWT_SIMMETRIC_KEY is not defined in the environment variables');
+}
+else{
+  runApp(jwtKey);
+}
+
+
 
 

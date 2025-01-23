@@ -1,7 +1,7 @@
 {
-    "name": "template-for-project-ts",
+    "name": "authentication-ts",
     "version": "1.0.0",
-    "description": "A template for TS project.",
+    "description": "A TS project.",
     "main": "dist/index.js",
     "scripts": {
         "start": "node dist/index.js",
