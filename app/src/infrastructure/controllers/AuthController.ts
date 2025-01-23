@@ -9,7 +9,7 @@ export class AuthController {
       const result = await this.loginUseCase.execute(req.body);
       res.json(result);
     } catch (error) {
-      res.status(401).json({ error: 'Authentication failed' });
+      res.status(401).json({ error: 'Authentication failed ' + error });
     }
   }
 }

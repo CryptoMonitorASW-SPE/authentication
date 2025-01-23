@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { TokenService } from '../../domain/ports/TokenService';
 
 export class JwtTokenService implements TokenService {
-  constructor(private readonly secret: string, private readonly expiration: string = '1h') {}
+  constructor(private readonly secret: string, private readonly expiration = '1h') {}
 
   generateToken(userId: string, email: string): string {
     return jwt.sign({ userId, email }, this.secret, { expiresIn: this.expiration });

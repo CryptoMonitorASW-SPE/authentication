@@ -45,7 +45,7 @@ const createAndLoginUser = async () => {
 };
 
 createAndLoginUser().then(() => {
-  
+  console.log("User created and logged in successfully");
 }).catch((error) => {
   console.error('Error executing account function:', error);
 });
