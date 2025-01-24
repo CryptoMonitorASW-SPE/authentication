@@ -8,7 +8,9 @@ export class JwtTokenService implements TokenService {
   ) {}
 
   generateToken(userId: string, email: string): string {
-    var token = jwt.sign({ userId, email }, this.secret)
+    var token = jwt.sign({ userId, email }, this.secret, {
+      expiresIn: this.expiration
+    } as SignOptions)
     return token
   }
 

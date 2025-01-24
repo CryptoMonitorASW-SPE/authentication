@@ -4,7 +4,7 @@ import { JwtTokenService } from './infrastructure/adapters/JwtTokenService'
 import { LoginUseCase } from './application/use-cases/LoginUseCase'
 import * as dotenv from 'dotenv'
 import { resolve } from 'path'
-import { AuthController } from './infrastructure/controllers/AuthController'
+import { AuthAdapter } from './infrastructure/adapters/AuthAdapter'
 import { MongoUserRepository } from './infrastructure/adapters/MongoUserRepository'
 //import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository'
 
@@ -29,7 +29,7 @@ const runApp = async (jwtKey: string) => {
   const dependencies = await configureDependencies()
   console.log('Dependencies configured')
 
-  const authController = new AuthController(dependencies.loginUseCase, dependencies.userRepository)
+  const authController = new AuthAdapter(dependencies.loginUseCase, dependencies.userRepository)
 
   const app = express()
   app.use(express.json())

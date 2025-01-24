@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { LoginUseCase } from '../../application/use-cases/LoginUseCase'
 import { UserRepository } from '../../domain/ports/UserRepository'
 
-export class AuthController {
+export class AuthAdapter {
   constructor(
     private loginUseCase: LoginUseCase,
     private userRepository: UserRepository
