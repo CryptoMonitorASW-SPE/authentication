@@ -1,7 +1,7 @@
-import User from '../entities/User';
+import User from '../entities/User'
 
 export interface UserRepository {
-  findByEmail(email: string): Promise<User | null>;
+  findByEmail(email: string): Promise<User | null>
 
-  createUser(email: string, password: string): Promise<User>;
+  createUser(email: string, password: string): Promise<User>
 }
