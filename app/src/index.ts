@@ -6,15 +6,15 @@ import * as dotenv from 'dotenv'
 import { resolve } from 'path'
 import { AuthController } from './infrastructure/controllers/AuthController'
 import { MongoUserRepository } from './infrastructure/adapters/MongoUserRepository'
-import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository'
+//import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository'
 
 dotenv.config({ path: resolve(__dirname, '../../../../.env') })
 
 const runApp = async (jwtKey: string) => {
   const configureDependencies = async () => {
-    const userRepository = new InMemoryUserRepository()
-    //const userRepository = new MongoUserRepository()
-    //await userRepository.ready
+    //const userRepository = new InMemoryUserRepository()
+    const userRepository = new MongoUserRepository()
+    await userRepository.ready
     const passwordHasher = new BcryptPasswordHasher()
     const tokenService = new JwtTokenService(jwtKey)
 
