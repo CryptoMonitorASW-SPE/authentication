@@ -6,7 +6,10 @@
     "scripts": {
         "start": "node dist/index.js",
         "build": "tsc",
-        "dev": "nodemon src/index.ts"
+        "dev": "nodemon src/index.ts",
+        "test": "mocha -r ts-node/register 'src/test/**/*.test.ts'",
+        "test:watch": "mocha -r ts-node/register --watch 'src/test/**/*.test.ts'",
+        "test:report": "mkdir -p reports && mocha -r ts-node/register 'src/test/**/*.test.ts' --reporter spec > reports/test-report.txt"
     },
     "author": "CryptoMonitor",
     "dependencies": {
@@ -27,8 +30,14 @@
     },
     "devDependencies": {
         "@types/bcrypt": "^5.0.2",
+        "@types/chai": "^5.0.1",
         "@types/jsonwebtoken": "^9.0.7",
+        "@types/mocha": "^10.0.10",
+        "@types/supertest": "^6.0.2",
+        "chai": "^5.1.2",
+        "mocha": "^11.1.0",
         "nodemon": "^3.0.1",
+        "supertest": "^7.0.0",
         "ts-node": "^10.9.2"
     }
 }

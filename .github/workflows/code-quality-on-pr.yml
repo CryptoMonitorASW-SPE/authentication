@@ -50,3 +50,35 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           path: eslint-report.txt
+
+      - name: Execute Tests
+        id: test
+        run: npm run test:report
+        working-directory: app
+
+      - name: Check if Test report is empty
+        id: check_empty_test
+        run: |
+          if [ ! -s app/reports/test-report.txt ]; then
+            echo "No test issues found." > app/reports/test-report.txt
+          fi
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: app/reports/test-report.txt
+
+      - name: Comment PR with Test Report
+        if: always()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: app/reports/test-report.txt
+          header: Test Report
+          
+
+      - name: Fail if tests failed
+        if: failure()
+        run: exit 1     
