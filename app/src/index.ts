@@ -7,6 +7,7 @@ import { resolve } from 'path'
 import { AuthAdapter } from './infrastructure/adapters/AuthAdapter'
 import { MongoUserRepository } from './infrastructure/adapters/MongoUserRepository'
 import { RefreshTokenUseCase } from './application/use-cases/RefreshTokenUseCase'
+import { ValidationUseCase } from './application/use-cases/ValidationUseCase'
 //import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository'
 
 dotenv.config({ path: resolve(__dirname, '../../../../.env') })
@@ -19,11 +20,13 @@ const runApp = async (jwtKey: string) => {
     const passwordHasher = new BcryptPasswordHasher()
     const tokenService = new JwtTokenService(jwtKey)
     const refreshTokenUseCase = new RefreshTokenUseCase(tokenService)
+    const validationUseCase = new ValidationUseCase(tokenService)
     const loginUseCase = new LoginUseCase(userRepository, tokenService, passwordHasher)
     return {
       userRepository,
       passwordHasher,
       tokenService,
+      validationUseCase,
       loginUseCase,
       refreshTokenUseCase
     }
@@ -35,6 +38,7 @@ const runApp = async (jwtKey: string) => {
   const authController = new AuthAdapter(
     dependencies.loginUseCase,
     dependencies.userRepository,
+    dependencies.validationUseCase,
     dependencies.refreshTokenUseCase
   )
 
@@ -49,6 +53,8 @@ const runApp = async (jwtKey: string) => {
 
   // Refresh Token Endpoint
   app.post('/refresh', (req, res) => authController.refresh(req, res))
+
+  app.post('/validate', (req, res) => authController.validate(req, res))
 
   app.get('/health', (req, res) => {
     res.status(200).json({
