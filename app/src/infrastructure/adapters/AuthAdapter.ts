@@ -39,7 +39,7 @@ export class AuthAdapter {
         return
       }
       const { newToken, newRefresh } = await this.refreshTokenUseCase.refresh(refreshToken)
-      res.json({ token: newToken, refreshToken: newRefresh })
+      res.status(201).json({ token: newToken, refreshToken: newRefresh })
     } catch (error) {
       res.status(401).json({ error: 'Invalid refresh token ' + error })
     }
@@ -63,7 +63,7 @@ export class AuthAdapter {
       const validationResult = await this.validationUseCase.validateToken(token)
 
       if (validationResult.valid) {
-        res.json({ valid: true, payload: validationResult.payload })
+        res.status(200).json({ valid: true, payload: validationResult.payload })
       } else {
         res.status(401).json({ valid: false, error: validationResult.error })
       }
