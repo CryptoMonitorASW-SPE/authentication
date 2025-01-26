@@ -4,7 +4,8 @@ export interface LoginCredentials {
 }
 
 export interface AuthResultDTO {
-  token: string
+  authToken: string
+  refreshToken: string
   userId: string
   email: string
 }

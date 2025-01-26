@@ -23,11 +23,4 @@ export class JwtTokenService implements TokenService {
   verifyToken(token: string): { userId: string; email: string } {
     return jwt.verify(token, this.secret) as { userId: string; email: string }
   }
-
-  refreshToken(refreshToken: string): { newAccessToken: string; newRefreshToken: string } {
-    const payload = jwt.verify(refreshToken, this.secret) as { userId: string; email: string }
-    const newAccessToken = this.generateToken(payload.userId, payload.email)
-    const newRefreshToken = this.generateRefreshToken(payload.userId, payload.email)
-    return { newAccessToken, newRefreshToken }
-  }
 }

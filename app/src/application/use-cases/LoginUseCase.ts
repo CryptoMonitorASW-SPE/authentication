@@ -26,7 +26,8 @@ export class LoginUseCase {
     }
 
     return {
-      token: this.tokenService.generateToken(user.id, user.email),
+      authToken: this.tokenService.generateToken(user.id, user.email),
+      refreshToken: this.tokenService.generateRefreshToken(user.id, user.email),
       userId: user.id,
       email: user.email
     }
