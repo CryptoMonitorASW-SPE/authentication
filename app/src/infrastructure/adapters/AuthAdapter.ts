@@ -67,8 +67,13 @@ export class AuthAdapter {
       } else {
         res.status(401).json({ valid: false, error: validationResult.error })
       }
-    } catch (error: any) {
-      res.status(500).json({ valid: false, error: 'Server error ' + error.message })
+    } catch (error: unknown) {
+      res
+        .status(500)
+        .json({
+          valid: false,
+          error: 'Server error ' + (error instanceof Error ? error.message : 'Unknown error')
+        })
     }
   }
 }

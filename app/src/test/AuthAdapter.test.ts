@@ -1,5 +1,5 @@
-import { assert } from 'chai'
 import sinon from 'sinon'
+import crypto from 'crypto'
 import { InMemoryUserRepository } from '../infrastructure/adapters/InMemoryUserRepository'
 import { JwtTokenService } from '../infrastructure/adapters/JwtTokenService'
 import { BcryptPasswordHasher } from '../infrastructure/adapters/BCryptPasswordHasher'
@@ -11,26 +11,6 @@ import { ValidationUseCasePort } from '../domain/ports/ValidationUseCasePort'
 import { RefreshTokenUseCase } from '../application/use-cases/RefreshTokenUseCase'
 import { ValidationUseCase } from '../application/use-cases/ValidationUseCase'
 import { expect } from 'chai'
-
-// Stub class implementing RefreshTokenUseCasePort
-// class RefreshTokenUseCaseStub implements RefreshTokenUseCasePort {
-//   refresh: sinon.SinonStub<[string], Promise<{ newToken: string; newRefresh: string }>>
-
-//   constructor() {
-//     this.refresh = sinon.stub()
-//   }
-// }
-
-// // Stub class implementing ValidationUseCasePort
-// import { ValidationUseCasePort } from '../domain/ports/ValidationUseCasePort'
-
-// class ValidationUseCaseStub implements ValidationUseCasePort {
-//   validateToken: sinon.SinonStub<[string], Promise<{ valid: boolean; payload?: any; error?: string }>>
-
-//   constructor() {
-//     this.validateToken = sinon.stub()
-//   }
-// }
 
 describe('AuthAdapter', () => {
   let userRepository: InMemoryUserRepository
@@ -47,8 +27,6 @@ describe('AuthAdapter', () => {
   let secretKey: string
 
   beforeEach(() => {
-    const crypto = require('crypto')
-
     // Generate a random 256-bit (32-byte) key
     secretKey = crypto.randomBytes(32).toString('hex')
 
@@ -91,7 +69,7 @@ describe('AuthAdapter', () => {
       password: 'password123'
     }
 
-    const result = await authController.createUser(req as Request, res as Response)
+    await authController.createUser(req as Request, res as Response)
 
     sinon.assert.calledWith(statusStub, 201)
     sinon.assert.calledOnce(jsonStub)

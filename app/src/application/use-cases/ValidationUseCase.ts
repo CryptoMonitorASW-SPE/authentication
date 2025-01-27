@@ -1,15 +1,28 @@
 import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
 import { TokenService } from '../../domain/ports/TokenService'
+import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
 
 export class ValidationUseCase implements ValidationUseCasePort {
   constructor(private tokenService: TokenService) {}
 
-  async validateToken(token: string): Promise<{ valid: boolean; payload?: any; error?: string }> {
+  async validateToken(
+    token: string
+  ): Promise<{ valid: boolean; payload: ValidationTokenPayload; error?: string }> {
     try {
-      const payload = this.tokenService.verifyToken(token)
+      const payload: ValidationTokenPayload = this.tokenService.verifyToken(
+        token
+      ) as unknown as ValidationTokenPayload
+      if (!payload) {
+        throw new Error('Invalid token')
+      }
+
       return { valid: true, payload }
-    } catch (error: any) {
-      return { valid: false, error: error.message || 'Invalid token' }
+    } catch (error) {
+      let errorMessage = 'Invalid token'
+      if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      return { valid: false, payload: {} as ValidationTokenPayload, error: errorMessage }
     }
   }
 }

@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenService } from '../../domain/ports/TokenService'
+import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
 
 export class JwtTokenService implements TokenService {
   constructor(
@@ -20,7 +21,7 @@ export class JwtTokenService implements TokenService {
     } as SignOptions)
   }
 
-  verifyToken(token: string): { userId: string; email: string } {
-    return jwt.verify(token, this.secret) as { userId: string; email: string }
+  verifyToken(token: string): ValidationTokenPayload {
+    return jwt.verify(token, this.secret) as ValidationTokenPayload
   }
 }
