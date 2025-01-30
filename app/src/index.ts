@@ -68,9 +68,28 @@ const runApp = async (jwtKey: string) => {
   })
 
   const PORT = process.env.PORT || 3000
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
+
+  const SHUTDOWN_TIMEOUT = 3000
+
+  process.on('SIGTERM', shutdown)
+  process.on('SIGINT', shutdown)
+
+  function shutdown() {
+    console.log('Shutting down gracefully...')
+    server.close(() => {
+      console.log('Closed out remaining connections.')
+      process.exit(0)
+    })
+
+    // Force shutdown after 5 seconds
+    setTimeout(() => {
+      console.error('Forcing shutdown.')
+      process.exit(1)
+    }, SHUTDOWN_TIMEOUT)
+  }
 }
 
 const jwtKey = process.env.JWT_SIMMETRIC_KEY
