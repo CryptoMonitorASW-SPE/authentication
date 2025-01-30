@@ -4,7 +4,7 @@ import com.github.gradle.node.task.NodeTask
 
 
 plugins {
-    id("org.danilopianini.git-sensitive-semantic-versioning") version "3.1.7"
+    id("org.danilopianini.git-sensitive-semantic-versioning") version "4.0.2"
     // Apply the Node.js plugin
     id("com.github.node-gradle.node") version "7.1.0"
 }
