@@ -5,7 +5,9 @@ import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayloa
 export class RefreshTokenUseCase implements RefreshTokenUseCasePort {
   constructor(private tokenService: TokenService) {}
 
-  async refresh(refreshToken: string): Promise<{ newToken: string; newRefresh: string }> {
+  async refresh(
+    refreshToken: string
+  ): Promise<{ newToken: string; newRefresh: string; userId: string; email: string }> {
     // Verify the refresh token
     const payload: ValidationTokenPayload = this.tokenService.verifyToken(
       refreshToken
@@ -15,6 +17,6 @@ export class RefreshTokenUseCase implements RefreshTokenUseCasePort {
     const newToken = this.tokenService.generateToken(payload.userId, payload.email)
     const newRefresh = this.tokenService.generateRefreshToken(payload.userId, payload.email)
 
-    return { newToken, newRefresh }
+    return { newToken, newRefresh, userId: payload.userId, email: payload.email }
   }
 }
