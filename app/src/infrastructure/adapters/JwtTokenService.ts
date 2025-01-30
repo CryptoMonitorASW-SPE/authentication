@@ -1,6 +1,7 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenService } from '../../domain/ports/TokenService'
 import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
+import { randomUUID } from 'crypto'
 
 export class JwtTokenService implements TokenService {
   constructor(
@@ -10,15 +11,31 @@ export class JwtTokenService implements TokenService {
   ) {}
 
   generateToken(userId: string, email: string): string {
-    return jwt.sign({ userId, email }, this.secret, {
-      expiresIn: this.expiration
-    } as SignOptions)
+    return jwt.sign(
+      {
+        userId,
+        email,
+        jti: randomUUID()
+      },
+      this.secret,
+      {
+        expiresIn: this.expiration
+      } as SignOptions
+    )
   }
 
   generateRefreshToken(userId: string, email: string): string {
-    return jwt.sign({ userId, email }, this.secret, {
-      expiresIn: this.refreshExpiration
-    } as SignOptions)
+    return jwt.sign(
+      {
+        userId,
+        email,
+        jti: randomUUID()
+      },
+      this.secret,
+      {
+        expiresIn: this.refreshExpiration
+      } as SignOptions
+    )
   }
 
   verifyToken(token: string): ValidationTokenPayload {
