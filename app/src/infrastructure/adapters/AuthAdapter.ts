@@ -3,6 +3,7 @@ import { LoginUseCase } from '../../application/use-cases/LoginUseCase'
 import { UserRepository } from '../../domain/ports/UserRepository'
 import { RefreshTokenUseCasePort } from '../../domain/ports/RefreshTokenUseCasePort'
 import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
+import axios from 'axios'
 
 export class AuthAdapter {
   constructor(
@@ -44,9 +45,22 @@ export class AuthAdapter {
   async createUser(req: Request, res: Response) {
     const { email, password } = req.body
     try {
+      // Create the user locally (or in your primary DB)
       const newUser = await this.userRepository.createUser(email, password)
+
+      const payload = {
+        userId: newUser.id,
+        email: newUser.email
+      }
+
+      const response = await axios.post('http://user-management:3000/users', payload)
+
+      console.log('Response from user-management:', response.data)
+      console.log('User created locally:', newUser)
+
       res.status(201).json({ message: 'User created', user: newUser })
     } catch (error) {
+      // Check for duplicate key error (e.g. if email is already in use)
       if (error instanceof Error && (error as any).code === 11000) {
         res.status(409).json({ error: 'Email already in use' })
       } else {
