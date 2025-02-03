@@ -53,10 +53,16 @@ export class AuthAdapter {
         email: newUser.email
       }
 
-      const response = await axios.post('http://user-management:3000/users', payload)
-
-      console.log('Response from user-management:', response.data)
-      console.log('User created locally:', newUser)
+      const serviceName = process.env.USER_MANAGEMENT_SERVICE_NAME
+      const servicePort = process.env.USER_MANAGEMENT_SERVICE_PORT
+      if (serviceName && servicePort) {
+        const userManagementUrl = `http://${serviceName}:${servicePort}/users`
+        await axios.post(userManagementUrl, payload)
+      } else {
+        console.log(
+          'USER_MANAGEMENT_SERVICE_NAME or USER_MANAGEMENT_SERVICE_PORT not set, skipping user save call.'
+        )
+      }
 
       res.status(201).json({ message: 'User created', user: newUser })
     } catch (error) {
