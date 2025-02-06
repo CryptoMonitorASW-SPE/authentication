@@ -132,36 +132,4 @@ export class AuthAdapter {
       })
     }
   }
-
-  // async validate(req: Request, res: Response): Promise<void> {
-  //   try {
-  //     // Assume the token is sent in the Authorization header as "Bearer <token>"
-  //     const authHeader = req.headers['authorization']
-  //     if (!authHeader) {
-  //       res.status(400).json({ error: 'Missing Authorization header' })
-  //       return
-  //     }
-
-  //     const token = authHeader.split(' ')[1]
-  //     if (!token) {
-  //       res.status(400).json({ error: 'Missing token' })
-  //       return
-  //     }
-
-  //     const validationResult = await this.validationUseCase.validateToken(token)
-
-  //     if (validationResult.valid) {
-  //       res.status(200).json({ valid: true, payload: validationResult.payload })
-  //     } else {
-  //       res.status(401).json({ valid: false, error: validationResult.error })
-  //     }
-  //   } catch (error: unknown) {
-  //     res
-  //       .status(500)
-  //       .json({
-  //         valid: false,
-  //         error: 'Server error ' + (error instanceof Error ? error.message : 'Unknown error')
-  //       })
-  //   }
-  // }
 }
