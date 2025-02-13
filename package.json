@@ -22,7 +22,7 @@
     "eslint": "npx eslint app/src/**/*.ts"
   },
   "engines": {
-    "node": "22.13.1"
+    "node": "22.14.0"
   },
   "lint-staged": {
     "app/src/**/*": "prettier --write --ignore-unknown"

@@ -1,7 +1,7 @@
 # ================================================
 # Stage 1: Build the application
 # ================================================
-FROM node:22.13-alpine AS build
+FROM node:22.14-alpine AS build
 
 # Set working directory
 WORKDIR /usr/src/app
@@ -21,7 +21,7 @@ RUN npm run build
 # ================================================
 # Stage 2: Production Image
 # ================================================
-FROM node:22.13-alpine
+FROM node:22.14-alpine
 
 RUN apk update && apk upgrade
 RUN apk --no-cache add curl
