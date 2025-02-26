@@ -24,11 +24,25 @@ gitSemVer {
     commitNameBasedUpdateStrategy(ConventionalCommit::semanticVersionUpdate)
 }
 
+node {
+    version.set("22.13.1")
+
+    // Download a local Node.js distribution (instead of using a global one)
+    download.set(true)
+
+    // If you have a specific version of npm to use, uncomment and set it:
+    // npmVersion.set("9.6.6")
+
+    // This is the directory where the plugin will look for package.json
+    nodeProjectDir.set(file(project.projectDir))
+}
+
 tasks.register<Delete>("cleanBuild"){
     group = "build"
-    description = "Delete the dist directory"
+    description = "Delete dist and build directories"
     doFirst {
         delete("dist")
+        delete("build")
     }
 }
 
@@ -51,18 +65,19 @@ tasks.register("npmCiAll") {
     dependsOn("npmCiRoot", "npmCiApp")
 }
 
-tasks.register<NpmTask>("prepareBackend") {
+tasks.register<NpmTask>("buildBackend") {
     dependsOn("npmCiAll")
     args.set(listOf("run", "build"))
 }
 
 tasks.register<NpmTask>("runDev"){
-    dependsOn("prepareBackend")
+    dependsOn("buildBackend")
     args.set(listOf("run", "dev"))
+    environment.putAll(mapOf("PORT" to "3031"))
 }
 
 tasks.register<NpmTask>("test") {
-    dependsOn("prepareBackend")
+    dependsOn("buildBackend")
     args.set(listOf("run", "test"))
 }
 
