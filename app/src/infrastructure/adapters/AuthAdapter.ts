@@ -14,6 +14,14 @@ import { RefreshTokenUseCasePort } from '../../domain/ports/RefreshTokenUseCaseP
  */
 @injectable()
 export class AuthAdapter {
+  /**
+   * Constructs a new AuthAdapter.
+   *
+   * @param loginUseCase - Use case for handling user logins.
+   * @param registrationUseCase - Use case for registering new users.
+   * @param validationUseCase - Use case for validating authentication tokens.
+   * @param refreshTokenUseCase - Use case for handling token refresh operations.
+   */
   constructor(
     @inject('LoginUseCasePort') private loginUseCase: LoginUseCasePort,
     @inject('RegistrationUseCasePort') private registrationUseCase: RegistrationUseCasePort,
@@ -21,7 +29,18 @@ export class AuthAdapter {
     @inject('RefreshTokenUseCasePort') private refreshTokenUseCase: RefreshTokenUseCasePort
   ) {}
 
-  async login(req: Request, res: Response) {
+  /**
+   * Handler for user login.
+   *
+   * **Route:** POST /api/auth/login
+   *
+   * **Description:** Authenticates a user and sets authentication and refresh tokens as cookies.
+   *
+   * @param req - Express Request object containing login credentials in the request body.
+   * @param res - Express Response object used to send back the login result or an error.
+   * @returns {Promise<void>} A promise that resolves after sending a response with the status and login details.
+   */
+  public async login(req: Request, res: Response): Promise<void> {
     try {
       const result = await this.loginUseCase.login(req.body)
 
@@ -50,11 +69,27 @@ export class AuthAdapter {
     }
   }
 
-  async createUser(req: Request, res: Response) {
+  /**
+   * Handler for creating a new user.
+   *
+   * **Route:** POST /api/auth/register
+   *
+   * **Description:** Creates a new user based on provided credentials,
+   * and optionally registers the new user in an external service.
+   *
+   * **Remarks:**
+   * - Expects the request body to contain `email` and `password`.
+   * - Uses environment variables USER_MANAGEMENT_SERVICE_NAME and USER_MANAGEMENT_SERVICE_PORT
+   *   to determine if the user should also be created in an external service.
+   *
+   * @param req - Express Request object containing `email` and `password` in its body.
+   * @param res - Express Response object for sending back the result of the user creation.
+   * @returns {Promise<void>} A promise that resolves after sending a response with the status and user details.
+   */
+  public async createUser(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body
     try {
-      // Create the user locally (or in your primary DB)
-      const newUser = await this.userRepository.createUser(email, password)
+      const newUser = await this.registrationUseCase.register(email, password)
 
       const payload = {
         userId: newUser.id,
@@ -74,7 +109,6 @@ export class AuthAdapter {
 
       res.status(201).json({ message: 'User created', user: newUser })
     } catch (error) {
-      // Check for duplicate key error (e.g. if email is already in use)
       if (error instanceof Error && (error as any).code === 11000) {
         res.status(409).json({ error: 'Email already in use' })
       } else {
@@ -85,7 +119,21 @@ export class AuthAdapter {
     }
   }
 
-  async refresh(req: Request, res: Response): Promise<void> {
+  /**
+   * Handler for refreshing authentication tokens.
+   *
+   * **Route:** POST /api/auth/refresh
+   *
+   * **Description:** Uses a refresh token to generate new authentication and refresh tokens.
+   *
+   * **Remarks:**
+   * - The refresh token is expected to be stored in a cookie called `refreshToken`.
+   *
+   * @param req - Express Request object containing the `refreshToken` cookie.
+   * @param res - Express Response object for sending back the new tokens or an error.
+   * @returns {Promise<void>} A promise that resolves after sending a response with the new tokens or an error.
+   */
+  public async refresh(req: Request, res: Response): Promise<void> {
     try {
       const refreshToken = req.cookies['refreshToken'] as string
 
@@ -121,7 +169,18 @@ export class AuthAdapter {
     }
   }
 
-  async logout(req: Request, res: Response): Promise<void> {
+  /**
+   * Handler for logging out a user.
+   *
+   * **Route:** POST /api/auth/logout
+   *
+   * **Description:** Clears the `authToken` and `refreshToken` cookies, effectively logging out the user.
+   *
+   * @param req - Express Request object.
+   * @param res - Express Response object for sending back the logout status.
+   * @returns {Promise<void>} A promise that resolves after clearing cookies and sending the response.
+   */
+  public async logout(req: Request, res: Response): Promise<void> {
     try {
       res.clearCookie('authToken', {
         httpOnly: true,
