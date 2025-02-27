@@ -81,6 +81,12 @@ tasks.register<NpmTask>("test") {
     args.set(listOf("run", "test"))
 }
 
+tasks.register<NpmTask>("docs") {
+    dependsOn("npmCiAll")
+    workingDir = file("..")
+    args.set(listOf("run", "docs"))
+}
+
 tasks.register("printVersion") {
     doLast {
         println("Project version: ${project.version}")
