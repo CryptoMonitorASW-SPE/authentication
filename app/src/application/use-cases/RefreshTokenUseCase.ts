@@ -1,6 +1,6 @@
 import { RefreshTokenUseCasePort } from '../../domain/ports/RefreshTokenUseCasePort'
 import { TokenService } from '../../domain/ports/TokenService'
-import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
+import { ValidationTokenPayload } from '../../domain/model/ValidationTokenPayload'
 
 export class RefreshTokenUseCase implements RefreshTokenUseCasePort {
   constructor(private tokenService: TokenService) {}

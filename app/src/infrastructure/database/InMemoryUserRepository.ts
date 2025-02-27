@@ -1,5 +1,5 @@
 import { UserRepository } from '../../domain/ports/UserRepository'
-import User from '../../domain/entities/User'
+import User from '../../domain/model/User'
 import * as bcrypt from 'bcrypt'
 
 export class InMemoryUserRepository implements UserRepository {

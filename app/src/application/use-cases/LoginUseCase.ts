@@ -1,7 +1,8 @@
 import { TokenService } from '../../domain/ports/TokenService'
 import { UserRepository } from '../../domain/ports/UserRepository'
 import { PasswordHasher } from '../../domain/ports/PasswordHasher'
-import { LoginCredentials, AuthResultDTO } from './AuthDTO'
+import { LoginCredentials, AuthResultDTO } from '../DTO/AuthDTO'
+import { LoginUseCasePort } from '../../domain/ports/LoginUseCasePort'
 
 export class LoginUseCase {
   constructor(

@@ -1,6 +1,6 @@
 import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
 import { TokenService } from '../../domain/ports/TokenService'
-import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
+import { ValidationTokenPayload } from '../../domain/model/ValidationTokenPayload'
 
 export class ValidationUseCase implements ValidationUseCasePort {
   constructor(private tokenService: TokenService) {}

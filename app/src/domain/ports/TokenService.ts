@@ -1,4 +1,4 @@
-import { ValidationTokenPayload } from './ValidationTokenPayload'
+import { ValidationTokenPayload } from '../model/ValidationTokenPayload'
 
 export interface TokenService {
   generateToken(userId: string, email: string): string

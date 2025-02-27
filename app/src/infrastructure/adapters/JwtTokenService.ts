@@ -1,6 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenService } from '../../domain/ports/TokenService'
-import { ValidationTokenPayload } from '../../domain/ports/ValidationTokenPayload'
+import { ValidationTokenPayload } from '../../domain/model/ValidationTokenPayload'
 import { randomUUID } from 'crypto'
 
 export class JwtTokenService implements TokenService {
