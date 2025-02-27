@@ -1,6 +1,7 @@
 import sinon from 'sinon'
 import crypto from 'crypto'
-import { InMemoryUserRepository } from '../infrastructure/adapters/InMemoryUserRepository'
+import 'reflect-metadata'
+import { InMemoryUserRepository } from '../infrastructure/database/InMemoryUserRepository'
 import { JwtTokenService } from '../infrastructure/adapters/JwtTokenService'
 import { BcryptPasswordHasher } from '../infrastructure/adapters/BCryptPasswordHasher'
 import { LoginUseCase } from '../application/use-cases/LoginUseCase'
@@ -11,6 +12,7 @@ import { ValidationUseCasePort } from '../domain/ports/ValidationUseCasePort'
 import { RefreshTokenUseCase } from '../application/use-cases/RefreshTokenUseCase'
 import { ValidationUseCase } from '../application/use-cases/ValidationUseCase'
 import { expect } from 'chai'
+import { RegistrationUseCase } from '../application/use-cases/RegistrationUseCase'
 
 describe('AuthAdapter', () => {
   let userRepository: InMemoryUserRepository
@@ -27,6 +29,7 @@ describe('AuthAdapter', () => {
   let secretKey: string
   let cookieStub: sinon.SinonStub
   let clearCookieStub: sinon.SinonStub
+  let registrationUseCase: RegistrationUseCase
 
   beforeEach(() => {
     // Generate a random 256-bit (32-byte) key
@@ -36,14 +39,14 @@ describe('AuthAdapter', () => {
     tokenService = new JwtTokenService(secretKey, '1h', '7d')
     passwordHasher = new BcryptPasswordHasher()
     loginUseCase = new LoginUseCase(userRepository, tokenService, passwordHasher)
-
+    registrationUseCase = new RegistrationUseCase(userRepository)
     // Create stub instances
     refreshTokenUseCase = new RefreshTokenUseCase(tokenService)
     validationUseCase = new ValidationUseCase(tokenService)
 
     authController = new AuthAdapter(
       loginUseCase,
-      userRepository,
+      registrationUseCase,
       validationUseCase,
       refreshTokenUseCase
     )
