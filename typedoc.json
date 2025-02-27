@@ -1,0 +1,10 @@
+{
+  "tsconfig": "./app/tsconfig.json",
+  "entryPoints": ["./app/src"],
+  "out": "./docs",
+  "readme": "none",
+  "entryPointStrategy": "expand",
+  "plugin": ["typedoc-material-theme"],
+  "themeColor": "#cb9820",
+  "exclude": ["./app/src/test"]
+}
