@@ -1,5 +1,6 @@
-import express from 'express'
 import 'reflect-metadata'
+import express from 'express'
+import { container } from 'tsyringe'
 import { BcryptPasswordHasher } from './infrastructure/adapters/BCryptPasswordHasher'
 import { JwtTokenService } from './infrastructure/adapters/JwtTokenService'
 import { LoginUseCase } from './application/use-cases/LoginUseCase'
@@ -10,40 +11,34 @@ import { MongoUserRepository } from './infrastructure/database/MongoUserReposito
 import { RefreshTokenUseCase } from './application/use-cases/RefreshTokenUseCase'
 import { ValidationUseCase } from './application/use-cases/ValidationUseCase'
 import cookieParser from 'cookie-parser'
-
-//import { InMemoryUserRepository } from './infrastructure/adapters/InMemoryUserRepository'
+import { RegistrationUseCase } from './application/use-cases/RegistrationUseCase'
 
 dotenv.config({ path: resolve(__dirname, '../../../../.env') })
 
 const runApp = async (jwtKey: string) => {
   const configureDependencies = async () => {
-    //const userRepository = new InMemoryUserRepository()
-    const userRepository = new MongoUserRepository()
-    await userRepository.ready
-    const passwordHasher = new BcryptPasswordHasher()
-    const tokenService = new JwtTokenService(jwtKey)
-    const refreshTokenUseCase = new RefreshTokenUseCase(tokenService)
-    const validationUseCase = new ValidationUseCase(tokenService)
-    const loginUseCase = new LoginUseCase(userRepository, tokenService, passwordHasher)
-    return {
-      userRepository,
-      passwordHasher,
-      tokenService,
-      validationUseCase,
-      loginUseCase,
-      refreshTokenUseCase
-    }
+    // Register implementations
+    container.register('UserRepository', { useClass: MongoUserRepository })
+    container.register('PasswordHasher', { useClass: BcryptPasswordHasher })
+
+    // Register instance that requires constructor parameters
+    container.registerInstance('TokenService', new JwtTokenService(jwtKey))
+
+    // Register use cases
+    container.register('RefreshTokenUseCasePort', { useClass: RefreshTokenUseCase })
+    container.register('ValidationUseCasePort', { useClass: ValidationUseCase })
+    container.register('LoginUseCasePort', { useClass: LoginUseCase })
+    container.register('RegistrationUseCasePort', { useClass: RegistrationUseCase })
+
+    // Initialize MongoDB connection
+    const repo = container.resolve<MongoUserRepository>('UserRepository')
+    await repo.ready
   }
 
-  const dependencies = await configureDependencies()
+  await configureDependencies()
   console.log('Dependencies configured')
 
-  const authController = new AuthAdapter(
-    dependencies.loginUseCase,
-    dependencies.userRepository,
-    dependencies.validationUseCase,
-    dependencies.refreshTokenUseCase
-  )
+  const authController = container.resolve(AuthAdapter)
 
   const app = express()
   app.use(express.json())

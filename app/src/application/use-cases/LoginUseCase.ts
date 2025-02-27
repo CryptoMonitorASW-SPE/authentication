@@ -1,14 +1,16 @@
+import { injectable, inject } from 'tsyringe'
 import { TokenService } from '../../domain/ports/TokenService'
 import { UserRepository } from '../../domain/ports/UserRepository'
 import { PasswordHasher } from '../../domain/ports/PasswordHasher'
 import { LoginCredentials, AuthResultDTO } from '../DTO/AuthDTO'
 import { LoginUseCasePort } from '../../domain/ports/LoginUseCasePort'
 
-export class LoginUseCase {
+@injectable()
+export class LoginUseCase implements LoginUseCasePort {
   constructor(
-    private userRepository: UserRepository,
-    private tokenService: TokenService,
-    private passwordHasher: PasswordHasher
+    @inject('UserRepository') private userRepository: UserRepository,
+    @inject('TokenService') private tokenService: TokenService,
+    @inject('PasswordHasher') private passwordHasher: PasswordHasher
   ) {}
 
   async login(credentials: LoginCredentials): Promise<AuthResultDTO> {

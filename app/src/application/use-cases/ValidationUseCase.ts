@@ -1,9 +1,11 @@
+import { injectable, inject } from 'tsyringe'
 import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
 import { TokenService } from '../../domain/ports/TokenService'
 import { ValidationTokenPayload } from '../../domain/model/ValidationTokenPayload'
 
+@injectable()
 export class ValidationUseCase implements ValidationUseCasePort {
-  constructor(private tokenService: TokenService) {}
+  constructor(@inject('TokenService') private tokenService: TokenService) {}
 
   async validateToken(
     token: string

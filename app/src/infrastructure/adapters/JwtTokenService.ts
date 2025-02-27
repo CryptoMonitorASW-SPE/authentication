@@ -1,8 +1,16 @@
+import { injectable } from 'tsyringe'
 import jwt, { SignOptions } from 'jsonwebtoken'
 import { TokenService } from '../../domain/ports/TokenService'
 import { ValidationTokenPayload } from '../../domain/model/ValidationTokenPayload'
 import { randomUUID } from 'crypto'
 
+/**
+ * Implementation of the TokenService interface using JWT.
+ *
+ * This class provides methods to generate authentication tokens, generate refresh tokens,
+ * and verify tokens using the JSON Web Token (JWT) library.
+ */
+@injectable()
 export class JwtTokenService implements TokenService {
   constructor(
     private readonly secret: string,

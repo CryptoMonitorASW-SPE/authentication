@@ -1,18 +1,24 @@
+import { injectable, inject } from 'tsyringe'
 import { Request, Response } from 'express'
 import axios from 'axios'
 import { LoginUseCasePort } from '../../domain/ports/LoginUseCasePort'
 import { RegistrationUseCasePort } from '../../domain/ports/RegistrationUseCasePort'
 import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
 import { RefreshTokenUseCasePort } from '../../domain/ports/RefreshTokenUseCasePort'
-import { ValidationUseCasePort } from '../../domain/ports/ValidationUseCasePort'
-import axios from 'axios'
 
+/**
+ * Adapter class for handling authentication-related HTTP endpoints.
+ *
+ * This class integrates with various use cases to handle authentication operations
+ * such as login, user registration, token refresh, and logout.
+ */
+@injectable()
 export class AuthAdapter {
   constructor(
-    private loginUseCase: LoginUseCase,
-    private userRepository: UserRepository,
-    private validationUseCase: ValidationUseCasePort,
-    private refreshTokenUseCase: RefreshTokenUseCasePort
+    @inject('LoginUseCasePort') private loginUseCase: LoginUseCasePort,
+    @inject('RegistrationUseCasePort') private registrationUseCase: RegistrationUseCasePort,
+    @inject('ValidationUseCasePort') private validationUseCase: ValidationUseCasePort,
+    @inject('RefreshTokenUseCasePort') private refreshTokenUseCase: RefreshTokenUseCasePort
   ) {}
 
   async login(req: Request, res: Response) {

@@ -2,6 +2,7 @@ import { UserRepository } from '../../domain/ports/UserRepository'
 import User from '../../domain/model/User'
 import * as bcrypt from 'bcrypt'
 import mongoose, { Schema, Document, Model } from 'mongoose'
+import { injectable } from 'tsyringe'
 
 interface IUser extends Document {
   email: string
@@ -14,7 +15,7 @@ const UserSchema: Schema = new Schema({
 })
 
 const UserModel: Model<IUser> = mongoose.model<IUser>('User', UserSchema)
-
+@injectable()
 export class MongoUserRepository implements UserRepository {
   public ready: Promise<void>
 
