@@ -1,4 +1,4 @@
-name: Docker Build On Release
+name: Release Workflow
 
 on:
   release:
@@ -47,3 +47,73 @@ jobs:
 
       - name: Verify Docker Image
         run: docker pull ghcr.io/${{ env.LOWERCASE_REPOSITORY }}:latest
+
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Set up JDK for Gradle
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # Grant execute permission to gradlew
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
+
+      # Generate TypeDoc documentation (this will also install dependencies via npmCiAll)
+      - name: Generate TypeDoc Documentation
+        run: ./gradlew docs
+
+      # Artifact upload step
+      - name: Upload Documentation Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: typedoc
+          path: docs
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1) Switch to (or create) the typedocDoc branch
+      - name: Checkout typedocDoc Branch
+        run: |
+          git checkout typedocDoc
+          rm -rf docs
+
+      # 2) Download previously generated docs
+      - name: Download Documentation Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: typedoc
+          path: docs
+
+      # (Optional) Import GPG Key and sign commits
+      - name: Import GPG Key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.BOT_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.BOT_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      # 3) Commit and push documentation
+      - name: Commit and Push Documentation
+        run: |
+          git add docs
+          git commit -m "docs: Update TypeDoc documentation"
+          git push origin typedocDoc
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
