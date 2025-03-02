@@ -46,7 +46,7 @@ tasks.register<NpmTask>("start") {
     args.set(listOf("run", "start"))
 }
 
-tasks.register<NpmTask>("cleanBuild"){
+tasks.register<Delete>("cleanBuild"){
     group = "build"
     description = "Delete dist and build directories"
     doFirst {
