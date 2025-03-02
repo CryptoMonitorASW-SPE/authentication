@@ -1,9 +1,6 @@
 name: Code Quality on PR
 
 on:
-  push:
-    branches:
-      - develop
   pull_request:
     types: [opened, synchronize, reopened]
 
