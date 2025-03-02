@@ -37,7 +37,19 @@ node {
     nodeProjectDir.set(file(project.projectDir))
 }
 
-tasks.register<Delete>("cleanBuild"){
+tasks.register<NpmTask>("installProdDependencies") {
+    group = "npm"
+    description = "Install only production dependencies (no dev dependencies)"
+    args.set(listOf("install", "--omit=dev"))
+}
+
+tasks.register<NpmTask>("start") {
+    group = "npm"
+    description = "Start the application in production mode"
+    args.set(listOf("run", "start"))
+}
+
+tasks.register<NpmTask>("cleanBuild"){
     group = "build"
     description = "Delete dist and build directories"
     doFirst {
@@ -65,26 +77,19 @@ tasks.register("npmCiAll") {
     dependsOn("npmCiRoot", "npmCiApp")
 }
 
-tasks.register<NpmTask>("buildBackend") {
-    dependsOn("npmCiAll")
+tasks.register<NpmTask>("build") {
+    dependsOn("npmCiApp")
     args.set(listOf("run", "build"))
 }
 
 tasks.register<NpmTask>("runDev"){
-    dependsOn("buildBackend")
+    dependsOn("build")
     args.set(listOf("run", "dev"))
-    environment.putAll(mapOf("PORT" to "3031"))
 }
 
 tasks.register<NpmTask>("test") {
-    dependsOn("buildBackend")
+    dependsOn("build")
     args.set(listOf("run", "test"))
-}
-
-tasks.register<NpmTask>("docs") {
-    dependsOn("npmCiAll")
-    workingDir = file("..")
-    args.set(listOf("run", "docs"))
 }
 
 tasks.register("printVersion") {
@@ -104,4 +109,10 @@ tasks.register("allInOne") {
     description = "Run build and tests, then start the application"
     dependsOn("preRunAll")
     finalizedBy("runDev")
+}
+
+tasks.register<NpmTask>("docs") {
+    dependsOn("npmCiAll")
+    workingDir = file("..")
+    args.set(listOf("run", "docs"))
 }

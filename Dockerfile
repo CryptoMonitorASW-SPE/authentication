@@ -1,43 +1,37 @@
-# ================================================
-# Stage 1: Build the application
-# ================================================
-FROM node:22.13-alpine AS build
-
-# Set working directory
+# Stage 1: Build with Gradle and Java
+FROM gradle:8.12.1-jdk-alpine AS build
 WORKDIR /usr/src/app
-
-# Copy package files
-COPY app/package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN apk add --update --no-cache curl nodejs npm
 
-# Copy the rest of the application code
-COPY app/ ./
+# Check installations
+RUN java -version && gradle --version && node -v && npm -v
 
-# Build the TypeScript application
-RUN npm run build
+# Copy gradle configuration files first (for better layer caching)
+COPY app/build.gradle.kts settings.gradle.kts ./app/
+COPY gradle ./app/gradle
+COPY ./gradlew ./gradlew.bat ./app/
 
-# ================================================
-# Stage 2: Production Image
-# ================================================
-FROM node:22.13-alpine
+# Copy the rest of the source code
+COPY . .
 
-RUN apk update && apk upgrade
-RUN apk --no-cache add curl
+# Build the application
+RUN gradle build
+RUN gradle installProdDependencies
 
-# Set working directory
-WORKDIR /usr/src/app
+# Stage 2: Runtime image with Node.js
+FROM node:22-alpine AS runtime
+WORKDIR /app
+RUN apk add --update --no-cache curl
 
-# Copy only the necessary files from the build stage
-COPY --from=build /usr/src/app/package*.json ./
-COPY --from=build /usr/src/app/dist ./dist
+# Copy necessary files from the build stage
+COPY --from=build /usr/src/app/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/app/dist ./dist
+COPY --from=build /usr/src/app/app/package.json ./
 
-# Install only production dependencies
-RUN npm install --only=production
-
-# Expose the application port
-EXPOSE 3001
+# Expose port
+EXPOSE 3000
 
 # Start the application
-CMD ["node", "dist/index.js"]
+CMD ["npm", "run", "start"]
