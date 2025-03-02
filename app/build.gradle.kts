@@ -25,7 +25,7 @@ gitSemVer {
 }
 
 node {
-    version.set("22.14.0")
+    version.set("22.13.1")
 
     // Download a local Node.js distribution (instead of using a global one)
     download.set(true)
