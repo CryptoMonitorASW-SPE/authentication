@@ -1,5 +1,5 @@
 # Stage 1: Build with Gradle and Java
-FROM gradle:8.12.1-jdk-alpine AS build
+FROM gradle:8.13.0-jdk-alpine AS build
 WORKDIR /usr/src/app
 
 # Install dependencies
