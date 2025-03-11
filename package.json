@@ -25,7 +25,7 @@
     "docs": "typedoc"
   },
   "engines": {
-    "node": "22.13.1"
+    "node": "22.14.0"
   },
   "lint-staged": {
     "app/src/**/*": "prettier --write --ignore-unknown"
